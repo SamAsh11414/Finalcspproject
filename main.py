@@ -2,6 +2,7 @@
 from turbo_flask import Turbo
 import flask
 import random
+import threading
 from flask import Flask, render_template, request, session
 import os
 from datetime import timedelta
@@ -13,12 +14,18 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days = 7)
 
+#@app.before_first_request
+#def before_first_request():
+#    threading.Thread(target=update_load).start()
+
 # login
 @app.route('/<username>', methods=['GET', 'POST'])
 def home(username):
+    global username
     if username in session:
         print(session.keys())
-        return 'hello {}, the time is {}'.format(username, time.asctime())
+        #return 'hello {}, the time is {}'.format(username, time.asctime())
+        return render_template('index.html')
 
     else:
         session[username] = username
@@ -42,8 +49,11 @@ def add(username):
     a[username] += 1
     return str(a[username])
 
+@app.context_processor
+def inject_load():
+	return {'user': username}
 
 if __name__ == '__main__':
     a = {}
-    app.run()
-    # turbo = Turbo(app)
+    app.run(host= '0.0.0.0')
+    #turbo = Turbo(app)
