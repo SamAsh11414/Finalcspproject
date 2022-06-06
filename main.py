@@ -21,7 +21,6 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days = 7)
 # login
 @app.route('/<username>', methods=['GET', 'POST'])
 def home(username):
-    global username
     if username in session:
         print(session.keys())
         #return 'hello {}, the time is {}'.format(username, time.asctime())
